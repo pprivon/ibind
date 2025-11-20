@@ -88,12 +88,6 @@ class IbkrClient(RestClient, AccountsMixin, ContractMixin, MarketdataMixin, Orde
 
         user_provided_url = url 
 
-        if self.oauth_config is None:
-            raise ValueError(
-                "use_oauth is True but no oauth_config was provided. "
-                "Please provide an instance of OAuth1aConfig or OAuth2Config."
-            )
-
         if self._use_oauth:
             # OAuth1aConfig and OAuth2Config are globally imported
             determined_url = None
@@ -197,7 +191,7 @@ class IbkrClient(RestClient, AccountsMixin, ContractMixin, MarketdataMixin, Orde
         
         if isinstance(self.oauth_config, OAuth1aConfig):
             processed_oauth_header = True
-            live_session_token_full_url = f'{self.base_url.rstrip('/')}/{self.oauth_config.live_session_token_endpoint.lstrip('/')}'
+            live_session_token_full_url = f'{self.base_url.rstrip("/")}/{self.oauth_config.live_session_token_endpoint.lstrip("/")}'
             if request_url == live_session_token_full_url:
                 _LOGGER.debug(f"Request URL {request_url} is OAuth 1.0a live_session_token_endpoint. Returning empty headers.")
                 return {} 
