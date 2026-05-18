@@ -41,7 +41,7 @@ def close(wsa_mock: MagicMock, status: str = None):
     wsa_mock._on_close(wsa_mock, None, None)
 
 
-def run_forever(wsa_mock: MagicMock, sslopt: dict = None, ping_interval: float = 0, ping_timeout: Optional[float] = None):
+def run_forever(wsa_mock: MagicMock, sslopt: dict = None, ping_interval: float = 0, ping_timeout: Optional[float] = None, skip_utf8_validation: bool = False):
     wsa_mock.keep_running = True
     wsa_mock._on_open(wsa_mock)
 
@@ -50,7 +50,7 @@ def create_wsa_mock():
     wsa_mock = MagicMock()
 
     wsa_mock.send.side_effect = lambda *args, **kwargs: send(wsa_mock, *args, **kwargs)
-    wsa_mock.close.side_effect = lambda status=None: close(wsa_mock, status)
+    wsa_mock.close.side_effect = lambda *args, **kwargs: close(wsa_mock, *args, **kwargs)
     wsa_mock.run_forever.side_effect = lambda *args, **kwargs: run_forever(wsa_mock, *args, **kwargs)
 
     return wsa_mock
