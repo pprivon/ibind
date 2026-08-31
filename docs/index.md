@@ -4,7 +4,7 @@ IBind is an unofficial Python API client library for the [Interactive Brokers Cl
 
 IBind wraps the IBKR Client Portal Web API with a REST API client (`IbkrClient`) for synchronous request/response operations like account management, order placement, contract searches, and data retrieval, and a WebSocket API client (`IbkrWsClient`) for asynchronous streaming of real-time market data, order updates, account changes, and PnL tracking. 
 
-It supports fully headless authentication through OAuth 1.0a, eliminating the need for running additional gateway software, and includes advanced features like automated question/answer handling, parallel requests, rate limiting, subscription tracking, and health monitoring. IBind is designed for algorithmic traders building automated trading systems, quantitative researchers requiring programmatic access to IBKR data and execution, portfolio managers needing real-time account monitoring and order management, and developers integrating IBKR functionality into Python applications. You should be comfortable with Python and have an Interactive Brokers account (individual or institutional, live or paper). 
+It supports fully headless authentication through OAuth 1.0a and OAuth 2.0, eliminating the need for running additional gateway software, and includes advanced features like automated question/answer handling, parallel requests, rate limiting, subscription tracking, and health monitoring. IBind is designed for algorithmic traders building automated trading systems, quantitative researchers requiring programmatic access to IBKR data and execution, portfolio managers needing real-time account monitoring and order management, and developers integrating IBKR functionality into Python applications. You should be comfortable with Python and have an Interactive Brokers account (individual or institutional, live or paper). 
 
 IBind provides comprehensive coverage of the IBKR Client Portal Web API 1.0, with almost all [IBKR REST API][ibkr-endpoints] endpoints mapped to `IbkrClient` methods (including session management, portfolio queries, contract searches, market data, order placement and management, historical data retrieval, and Financial Advisor operations), and full support for the [IBKR WebSocket API][ibkr-websocket] (including market data streaming, order status updates, trade notifications, account and portfolio updates, PnL tracking, and custom subscription management).
 
@@ -14,7 +14,7 @@ IBind provides comprehensive coverage of the IBKR Client Portal Web API 1.0, wit
 
 Start here
 1. [Setup](setup.md) - install IBind and verify your installation
-2. [Authentication](authentication.md) - choose between Client Portal Gateway or OAuth 1.0a
+2. [Authentication](authentication.md) - choose between Client Portal Gateway, OAuth 1.0a or OAuth 2.0
 3. [Quickstart](quickstart.md) - get up and running in minutes
 
 Working with the REST API
@@ -27,9 +27,10 @@ Working with the WebSocket API
 * [WebSocket Quickstart](websocket/quickstart.md) - minimal working example
 * [Core Concepts](websocket/core-concepts/) - events, subscriptions, sinks, runtime lifecycle
 
-Using OAuth 1.0a
+Using OAuth
 * [OAuth 1.0a Setup](oauth/oauth_1a.md) - step-by-step guide to headless authentication
 * [Advanced OAuth 1.0a](oauth/advanced_oauth_1a.md) - customisation and WebSocket usage
+* [OAuth 2.0 Setup](oauth/oauth_2.md) - headless authentication using the Client Credentials Grant flow
 
 Examples
 * [Examples folder][examples] - working code samples for common use cases
@@ -46,7 +47,7 @@ Additional Resources
 pip install ibind
 ```
 
-For OAuth 1.0a support:
+For OAuth 1.0a and OAuth 2.0 support:
 ```bash
 pip install ibind[oauth]
 ```

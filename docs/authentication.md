@@ -1,9 +1,10 @@
 # Authentication 
 
-There currently are two ways you can authenticate with IBKR CP Web API:
+There currently are three ways you can authenticate with IBKR CP Web API:
 
 1. Using [Client Portal Gateway](#gateway)
 1. Using [OAuth 1.0a](#oauth1a)
+1. Using [OAuth 2.0](#oauth2)
 
 Few observations to help you chose:
 * [Client Portal Gateway][gateway] has been available for longer and [IBeam][ibeam] greatly simplifies its setup and maintenance, making this a quicker solution to get started than OAuth 1.0a.
@@ -34,9 +35,17 @@ We recommend using [IBeam][ibeam] to automate and simplify starting the Gateway 
 
 See [OAuth 1.0a][oauth1a] page for how to set it up with IBind.
 
+## <a name="oauth2"></a> OAuth 2.0
+
+[OAuth 2.0][ibkr-oauth2] is provisioned by IBKR on request rather than through a self-service portal, and appears to be primarily targeted at business accounts. Once granted, its setup is simpler than that of OAuth 1.0a, requiring only a single key pair and no Diffie-Hellman exchange.
+
+See [OAuth 2.0][oauth2] page for how to set it up with IBind.
+
 
 
 [gateway]: https://www.interactivebrokers.com/docs/web-api/authentication/introduction#client-portal-gateway
 [ibkr-oauth1a]: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#oauth-10a
 [ibeam]: https://github.com/Voyz/ibeam
+[ibkr-oauth2]: https://www.interactivebrokers.com/campus/ibkr-api-page/cpapi-v1/#oauth-20
 [oauth1a]: ./oauth/oauth_1a.md
+[oauth2]: ./oauth/oauth_2.md

@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import importlib.util
 import os
 import time
 import warnings
-from typing import Union, Optional, TYPE_CHECKING, cast
+from typing import Union, Optional, TYPE_CHECKING
 
 from ibind import var
 from ibind.base.rest_client import RestClient, Result
@@ -88,8 +86,7 @@ class IbkrClient(
             log_responses (bool, optional): Whether to log responses from the API. Defaults to False.
             verbose_retries (bool, optional): Whether to log verbose retry information. Defaults to False.
             use_oauth (bool, optional): Whether to use OAuth authentication. Defaults to False.
-            oauth_config (OAuthConfig, optional): The configuration for the OAuth authentication.
-                                                  OAuth1aConfig is used if not specified.
+            oauth_config (OAuthConfig, optional): The configuration for the OAuth authentication. OAuth1aConfig is used if not specified.
         """
         self._tickler: Optional[Tickler] = None
         self._use_oauth = use_oauth
@@ -102,9 +99,8 @@ class IbkrClient(
             if self.oauth_config is None:
                 self.oauth_config = OAuth1aConfig()
             elif not isinstance(self.oauth_config, (OAuth1aConfig, OAuth2Config)):
-                raise ValueError(f'Unsupported OAuth configuration type: {type(self.oauth_config)}')
+                raise ValueError(f'Unsupported OAuth configuration type: {type(self.oauth_config)}. Expected OAuth1aConfig or OAuth2Config.')
 
-            self.oauth_config = cast('OAuthConfig', self.oauth_config)
             url = url if url is not None and self.oauth_config.oauth_rest_url is None else self.oauth_config.oauth_rest_url
 
         if url is None:
@@ -127,7 +123,7 @@ class IbkrClient(
 
         self.logger.info('#################')
         self.logger.info(
-            f'New IbkrClient(base_url={self.base_url!r}, account_id={self.account_id!r}, ssl={self.cacert!r}, timeout={self._timeout}, max_retries={self._max_retries}, use_oauth={self._use_oauth}, oauth_version={self.oauth_config.version() if self.oauth_config is not None else None})'
+            f'New IbkrClient(base_url={self.base_url!r}, account_id={self.account_id!r}, ssl={self.cacert!r}, timeout={self._timeout}, max_retries={self._max_retries}, use_oauth={self._use_oauth}{f", oauth_version={self.oauth_config.version()}" if self.oauth_config else ""})'
         )
 
         if self._use_oauth:
@@ -153,27 +149,29 @@ class IbkrClient(
             raise
 
     def _get_headers(self, request_method: str, request_url: str):
-        if not self._use_oauth or self.oauth_config is None:
+        if not self._use_oauth:
+            # No need for extra headers if we don't use OAuth
             return {}
 
-        from ibind.oauth.oauth1a import OAuth1aConfig, generate_oauth_headers  # NOQA: PLC0415
         from ibind.oauth.oauth2 import OAuth2Config  # NOQA: PLC0415
 
         if isinstance(self.oauth_config, OAuth2Config):
             if request_url in {self.oauth_config.token_url, self.oauth_config.sso_session_url}:
+                # No need for extra headers when requesting the access token or the SSO bearer token
                 return {}
 
             if not self.oauth_config.has_sso_bearer_token():
-                _LOGGER.error(f'{self}: OAuth 2.0 configured for {request_url}, but SSO bearer token is missing.')
+                _LOGGER.error(f'{self}: OAuth 2.0 is configured, but SSO bearer token is missing when trying to set headers.')
                 return {}
 
             return {'Authorization': f'Bearer {self.oauth_config.sso_bearer_token}'}
 
-        if not isinstance(self.oauth_config, OAuth1aConfig):
-            raise ValueError(f'Unsupported OAuth configuration type: {type(self.oauth_config)}')
-
         if request_url == f'{self.base_url}{self.oauth_config.live_session_token_endpoint}':
+            # No need for extra headers when getting the live session token
             return {}
+
+        # get headers for endpoints other than live session token request
+        from ibind.oauth.oauth1a import generate_oauth_headers  # NOQA: PLC0415
 
         return generate_oauth_headers(
             oauth_config=self.oauth_config, request_method=request_method, request_url=request_url, live_session_token=self.live_session_token
@@ -226,7 +224,7 @@ class IbkrClient(
         """
         _LOGGER.info(f'{self}: Initialising OAuth {self.oauth_config.version()}')
 
-        from ibind.oauth.oauth1a import OAuth1aConfig, validate_live_session_token  # NOQA: PLC0415
+        from ibind.oauth.oauth1a import validate_live_session_token  # NOQA: PLC0415
         from ibind.oauth.oauth2 import OAuth2Config, authenticate_oauth2, establish_oauth2_brokerage_session  # NOQA: PLC0415
 
         if importlib.util.find_spec('Crypto') is None:
@@ -244,9 +242,7 @@ class IbkrClient(
                 self.start_tickler()
             return
 
-        if not isinstance(self.oauth_config, OAuth1aConfig):
-            raise ValueError(f'Unsupported OAuth configuration type: {type(self.oauth_config)}')
-
+        # get live session token for OAuth 1.0a authentication
         self.generate_live_session_token()
 
         success = validate_live_session_token(
@@ -308,14 +304,11 @@ class IbkrClient(
         This method stops the Tickler process, which keeps the session alive, and logs out from
         the IBKR API to ensure a clean session termination.
         """
-        if not self._use_oauth or self.oauth_config is None:
-            return
-
         _LOGGER.info(f'{self}: Shutting down OAuth')
         self.stop_tickler()
         self.logout()
 
-        from ibind.oauth.oauth2 import OAuth2Config
+        from ibind.oauth.oauth2 import OAuth2Config  # NOQA: PLC0415
 
         if isinstance(self.oauth_config, OAuth2Config):
             self.oauth_config.sso_bearer_token = None

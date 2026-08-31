@@ -25,7 +25,7 @@ pip install ibind
 
 ## Authentication
 
-IBind supports fully headless authentication using [OAuth 1.0a][wiki-oauth1a] and OAuth 2.0. This means no longer needing to run any type of software to communicate with IBKR API.
+IBind supports fully headless authentication using [OAuth 1.0a][wiki-oauth1a] and [OAuth 2.0][wiki-oauth2]. This means no longer needing to run any type of software to communicate with IBKR API.
 
 Alternatively, use [IBeam][ibeam] along with this library for easier setup and maintenance of the CP Gateway.
 
@@ -38,6 +38,7 @@ See full [IBind documentation][wiki].
 * [Installation][wiki-installation]
 * [Authentication][wiki-authentication]
 * [OAuth 1.0a][wiki-oauth1a]
+* [OAuth 2.0][wiki-oauth2]
 * [IBind Configuration][wiki-ibind-configuration]
 * [IbkrClient][wiki-ibkr-client] - REST Python client for [IBKR REST API][ibkr-endpoints].
 * [IbkrWsClient][wiki-ibkr-ws-client] - WebSocket Python client for [IBKR WebSocket API][ibkr-websocket].
@@ -188,6 +189,7 @@ Thanks and have an awesome day 👋
 [wiki-installation]: ./docs/setup.md
 [wiki-authentication]: ./docs/authentication.md
 [wiki-oauth1a]: ./docs/oauth/oauth_1a.md
+[wiki-oauth2]: ./docs/oauth/oauth_2.md
 [wiki-ibind-configuration]: ./docs/configuration.md
 [wiki-ibkr-client]: ./docs/rest/ibkr_client.md
 [wiki-ibkr-ws-client]: ./docs/websocket/overview.md

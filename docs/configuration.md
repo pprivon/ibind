@@ -136,6 +136,18 @@ A full and most up-to-date list of environment variables can be found in the [`v
 | `IBIND_OAUTH1A_SIGNATURE_KEY` | None | The private OAuth 1.0a signature key content (alternative to IBIND_OAUTH1A_SIGNATURE_KEY_FP). |
 | `IBIND_OAUTH1A_DH_GENERATOR` | 2 | The Diffie-Hellman generator value. |
 | `IBIND_OAUTH1A_REALM` | 'limited_poa' | OAuth 1.0a connection type. This is generally set to "limited_poa", however should be set to "test_realm" when using the TESTCONS consumer key. |
+| `IBIND_OAUTH2_REST_URL` | 'https://api.ibkr.com/v1/api/' | IBKR Client Portal OAuth 2.0 base URL for REST API. |
+| `IBIND_OAUTH2_WS_URL` | 'wss://api.ibkr.com/v1/api/ws' | IBKR Client Portal OAuth 2.0 base URL for WebSocket API. |
+| `IBIND_OAUTH2_CLIENT_ID` | None | The OAuth 2.0 client ID issued by IBKR. |
+| `IBIND_OAUTH2_CLIENT_KEY_ID` | None | The OAuth 2.0 client key ID (the JWT 'kid') issued by IBKR. |
+| `IBIND_OAUTH2_USERNAME` | None | The IBKR username associated with the OAuth 2.0 client. |
+| `IBIND_OAUTH2_PRIVATE_KEY_PATH` | None | The path to the private key PEM file used to sign the JWT client assertions. |
+| `IBIND_OAUTH2_PRIVATE_KEY_PEM` | None | The private key PEM content (alternative to IBIND_OAUTH2_PRIVATE_KEY_PATH). Newlines may be escaped as '\n'. |
+| `IBIND_OAUTH2_IP_ADDRESS` | None | The public IP address sent in the SSO session claim. Deduced automatically when not set. |
+| `IBIND_OAUTH2_TOKEN_URL` | 'https://api.ibkr.com/oauth2/api/v1/token' | OAuth 2.0 token endpoint. |
+| `IBIND_OAUTH2_SSO_SESSION_URL` | 'https://api.ibkr.com/gw/api/v1/sso-sessions' | OAuth 2.0 SSO session endpoint. |
+| `IBIND_OAUTH2_AUDIENCE` | '/token' | OAuth 2.0 audience for the JWT. |
+| `IBIND_OAUTH2_SCOPE` | 'sso-sessions.write' | OAuth 2.0 token scope. |
 
 ## <a name="logging"></a> Logging
 
