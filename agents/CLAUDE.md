@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-IBind is a Python library providing REST and WebSocket clients for the Interactive Brokers Client Portal Web API (CPAPI 1.0). It supports both traditional authentication via IBeam/CP Gateway and headless OAuth 1.0a authentication.
+IBind is a Python library providing REST and WebSocket clients for the Interactive Brokers Client Portal Web API (CPAPI 1.0). It supports traditional authentication via IBeam/CP Gateway as well as headless OAuth 1.0a and OAuth 2.0 authentication.
 
 ## Core Architecture
 
@@ -15,7 +15,7 @@ The library is structured around two main client classes:
 - **Purpose**: REST API client extending `RestClient` base class
 - **Mixins**: Functionality is organized into mixins in `ibind/client/ibkr_client_mixins/`:
   - `accounts_mixin.py` - Account operations
-  - `contract_mixin.py` - Contract/security operations
+  - `contract_mixin.py` - Contract/security operations  
   - `marketdata_mixin.py` - Market data operations
   - `order_mixin.py` - Order management
   - `portfolio_mixin.py` - Portfolio operations
@@ -36,7 +36,7 @@ The library is structured around two main client classes:
   - `subscription_controller.py` - WebSocket subscription handling
 
 ### Authentication
-- `ibind/oauth/` - OAuth 1.0a implementation for headless authentication
+- `ibind/oauth/` - OAuth 1.0a and OAuth 2.0 implementations for headless authentication
 - Environment variable configuration via `ibind/var.py`
 
 ## Development Commands
@@ -104,7 +104,7 @@ The `examples/` directory contains comprehensive usage examples:
 
 ## Important Notes
 
-- The library supports both OAuth 1.0a (headless) and traditional CP Gateway authentication
+- The library supports OAuth 1.0a and OAuth 2.0 (both headless) as well as traditional CP Gateway authentication
 - WebSocket client requires careful lifecycle management (start/stop, subscription handling)
 - Rate limiting and parallel request handling are built into the REST client
 - All API endpoints follow IBKR's REST API documentation structure
