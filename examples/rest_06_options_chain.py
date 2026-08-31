@@ -8,9 +8,11 @@ In this example we:
 
 Assumes the Gateway is deployed at 'localhost:5000' and the IBIND_ACCOUNT_ID and IBIND_CACERT environment variables have been set.
 """
+
 import datetime
 import os
 from pprint import pprint
+from typing import Dict
 from unittest.mock import patch, MagicMock
 
 from ibind import IbkrClient, ibind_logs_initialize, OrderRequest, QuestionType
@@ -32,7 +34,7 @@ spx_contract = contracts[0]
 pprint(spx_contract)
 
 # find the options section in spx_contract
-options = None
+options: Dict | None = None
 for section in spx_contract['sections']:
     if section['secType'] == 'OPT':
         options = section
@@ -49,8 +51,15 @@ strikes = client.search_strikes_by_conid(conid=spx_contract['conid'], sec_type='
 print(str(strikes).replace("'put'", "\n'put'"))
 
 print('\n#### validate contract ####')
+"""
+In order to query weekly options contracts, you need to first query the specific strike.
+Modify the `nth_strike` variable to select the strike you want to query.
+It is likely the first strike (default) will return a list with only one contract.
+Other strikes are likely to return a longer list of available weeklies.
+"""
+nth_strike = 0
 info = client.search_secdef_info_by_conid(
-    conid=spx_contract['conid'], sec_type='OPT', month=options['months'][0], strike=strikes['call'][0], right='C'
+    conid=spx_contract['conid'], sec_type='OPT', month=options['months'][0], strike=strikes['call'][nth_strike], right='C'
 ).data
 
 print_table(info)
@@ -88,15 +97,15 @@ _SPREAD_CONIDS = {
 
 # Build conidex string for combo order
 # Combo Orders follow the format of: '{spread_conid};;;{leg_conid1}/{ratio},{leg_conid2}/{ratio}'
-conidex = f"{_SPREAD_CONIDS[currency]};;;"
+conidex = f'{_SPREAD_CONIDS[currency]};;;'
 
 leg_strings = []
 for leg in legs:
-    multiplier = 1 if leg['side'] == "BUY" else -1
-    leg_string = f'{leg['conid']}/{leg['ratio'] * multiplier}'
+    multiplier = 1 if leg['side'] == 'BUY' else -1
+    leg_string = f'{leg["conid"]}/{leg["ratio"] * multiplier}'
     leg_strings.append(leg_string)
 
-conidex = conidex + ",".join(leg_strings)
+conidex = conidex + ','.join(leg_strings)
 
 # Prepare the OrderRequest
 side = 'BUY'
@@ -105,13 +114,13 @@ order_type = 'MKT'
 order_tag = f'my_order-{datetime.datetime.now().strftime("%Y%m%d%H%M%S")}'
 
 order_request = OrderRequest(
-    conid=None, # must be None when specifying conidex
+    conid=None,  # must be None when specifying conidex
     conidex=conidex,
     side=side,
     quantity=size,
     order_type=order_type,
     acct_id=account_id,
-    coid=order_tag
+    coid=order_tag,
 )
 
 answers = {

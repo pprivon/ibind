@@ -34,7 +34,7 @@ class OAuthConfig(ABC):
     init_oauth: bool = var.IBIND_INIT_OAUTH
     """ Whether OAuth should be automatically initialised. """
 
-    init_brokerage_session: bool = var.IBIND_INIT_OAUTH
+    init_brokerage_session: bool = var.IBIND_INIT_BROKERAGE_SESSION
     """ Whether initialize_brokerage_session should be called automatically on startup. """
 
     maintain_oauth: bool = var.IBIND_MAINTAIN_OAUTH
