@@ -194,7 +194,7 @@ def test_on_message_system_heartbeat(ws_client, patched_constructors):
     ## Assert
     assert ws_client._last_heartbeat == hb
 
-@capture_logs(logger_level='DEBUG', expected_errors = ["IbkrWsClient: Account ID mismatch: expected=TEST_ACCOUNT_ID, received=['OTHER_ACCOUNT_ID']"])
+@capture_logs(logger_level='DEBUG', expected_errors = ["IbkrWsClient: Account ID mismatch: expected=TEST***T_ID, received=['OTHER_ACCOUNT_ID']"])
 def test_on_message_act_account_mismatch(ws_client, patched_constructors):
     """Logs a warning when account list in act message mismatches expected account."""
     ## Act

@@ -17,7 +17,7 @@ from ibind.client.ibkr_client_mixins.session_mixin import SessionMixin
 from ibind.client.ibkr_client_mixins.watchlist_mixin import WatchlistMixin
 from ibind.client.ibkr_utils import Tickler
 from ibind.support.errors import ExternalBrokerError
-from ibind.support.logs import new_daily_rotating_file_handler, project_logger
+from ibind.support.logs import mask_account_id, new_daily_rotating_file_handler, project_logger
 from ibind.support.py_utils import exception_to_string
 
 # OAuth specific imports moved to global scope
@@ -139,14 +139,14 @@ class IbkrClient(RestClient, AccountsMixin, ContractMixin, MarketdataMixin, Orde
         if not hasattr(self, '_headers') or self._headers is None:
             log_msg = "_headers attribute was not initialized (or was None) prior to this check. Initializing to an empty dict in IbkrClient."
             if hasattr(self, 'logger') and self.logger:
-                self.logger.warning(log_msg)
+                self.logger.debug(log_msg)
             else:
-                _LOGGER.warning(f"IbkrClient __init__: {log_msg} (using module logger as self.logger might be unavailable).")
+                _LOGGER.debug(f"IbkrClient __init__: {log_msg} (using module logger as self.logger might be unavailable).")
             self._headers = {}
 
         self.logger.info('#################')
         self.logger.info(
-            f'New IbkrClient(base_url={self.base_url!r}, account_id={self.account_id!r}, ssl={self.cacert!r}, timeout={self._timeout}, max_retries={self._max_retries}, use_oauth={self._use_oauth}, oauth_version={self.oauth_config.version() if self.oauth_config else None})'
+            f'New IbkrClient(base_url={self.base_url!r}, account_id={mask_account_id(self.account_id)!r}, ssl={self.cacert!r}, timeout={self._timeout}, max_retries={self._max_retries}, use_oauth={self._use_oauth}, oauth_version={self.oauth_config.version() if self.oauth_config else None})'
         )
 
         if self._use_oauth:
