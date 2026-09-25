@@ -51,7 +51,7 @@ def project_logger(filepath=None):
 # IBKR account ids: `U`, `DU`, `DF`, `DFP` followed by the digits. Same pattern and mask
 # shape as vva-broker-arbiter's `mask_account`: keep the prefix letters and the last four
 # digits, mask the middle (`U12345678` -> `U***5678`, `DU0000002` -> `DU***0002`).
-_ACCOUNT_ID_RE = re.compile(r'\b(U|D[UF]P?)(\d{6,10})\b')
+_ACCOUNT_ID_RE = re.compile(r'(?<![A-Za-z0-9])(U|D[UF]P?)(\d{6,10})(?![0-9])')
 
 
 def mask_account_id(account_id: Optional[str]) -> Optional[str]:
