@@ -1,8 +1,9 @@
 import datetime
 import logging
+import re
 import sys
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from ibind import var
 
@@ -45,6 +46,33 @@ def project_logger(filepath=None):
         logging.Logger: The project-specific logger instance.
     """
     return logging.getLogger('ibind' + (f'.{Path(filepath).stem}' if filepath is not None else ''))
+
+
+# IBKR account ids: `U`, `DU`, `DF`, `DFP` followed by the digits. Same pattern and mask
+# shape as vva-broker-arbiter's `mask_account`: keep the prefix letters and the last four
+# digits, mask the middle (`U12345678` -> `U***5678`, `DU0000002` -> `DU***0002`).
+_ACCOUNT_ID_RE = re.compile(r'\b(U|D[UF]P?)(\d{6,10})\b')
+
+
+def mask_account_id(account_id: Optional[str]) -> Optional[str]:
+    """
+    Masks a single account id for logging: prefix letters, `***`, last four characters.
+
+    Ids too short to keep a tail are masked entirely after the prefix. `None` is returned as is.
+    """
+    if account_id is None:
+        return None
+    account_id = str(account_id)
+    prefix = re.match(r'[A-Za-z]*', account_id).group(0)
+    rest = account_id[len(prefix):]
+    if not rest:
+        return '***'
+    return f'{prefix}***{rest[-4:]}' if len(rest) > 4 else f'{prefix}***'
+
+
+def mask_account_ids(text) -> str:
+    """Masks every IBKR account id appearing anywhere in `text` (URLs, params, payloads)."""
+    return _ACCOUNT_ID_RE.sub(lambda m: f'{m.group(1)}***{m.group(2)[-4:]}', str(text))
 
 
 _LOGGER = project_logger()
@@ -125,7 +153,7 @@ def new_daily_rotating_file_handler(logger_name, filepath):
                 break
 
         if ibind_filehandler is None:
-            _LOGGER.info(f'New daily rotating file handler for logger "{logger_name}": {filepath}')
+            _LOGGER.info(f'New daily rotating file handler for logger "{logger_name}": {mask_account_ids(filepath)}')
             fh_logger = logging.getLogger('ibind_fh')
             handler = DailyRotatingFileHandler(filename=filepath, encoding='utf-8')
             handler.name = logger_name
@@ -136,7 +164,7 @@ def new_daily_rotating_file_handler(logger_name, filepath):
                 logger.addFilter(filter)
             logger.addHandler(handler)
         else:
-            _LOGGER.info(f'Existing daily rotating file handler for logger "{logger_name}": {filepath}')
+            _LOGGER.info(f'Existing daily rotating file handler for logger "{logger_name}": {mask_account_ids(filepath)}')
 
         logger.setLevel(logging.DEBUG)
     else:

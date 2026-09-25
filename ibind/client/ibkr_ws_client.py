@@ -14,7 +14,7 @@ from ibind.client import ibkr_definitions
 from ibind.client.ibkr_client import IbkrClient
 from ibind.client.ibkr_utils import extract_conid
 from ibind.support.errors import ExternalBrokerError
-from ibind.support.logs import project_logger
+from ibind.support.logs import mask_account_id, mask_account_ids, project_logger
 from ibind.support.py_utils import TimeoutLock, UNDEFINED, wait_until
 
 _LOGGER = project_logger(__file__)
@@ -386,11 +386,11 @@ class IbkrWsClient(WsClient):
     def _handle_account_update(self, message, data):
         self._handle_unsolicited_message(IbkrWsKey.ACCOUNT_UPDATES, message)
         if 'accounts' in data and self._account_id not in data['accounts']:
-            _LOGGER.error(f'{self}: Account ID mismatch: expected={self._account_id}, received={data["accounts"]}')
+            _LOGGER.error(f'{self}: Account ID mismatch: expected={mask_account_id(self._account_id)}, received={mask_account_ids(data["accounts"])}')
         elif 'acctProps' in data:  # expected account update that we ignore
             pass
         else:
-            _LOGGER.info(f'{self}: Account message: {data}')
+            _LOGGER.info(f'{self}: Account message: {mask_account_ids(data)}')
             return
 
     def _handle_authentication_status(self, message, data):
