@@ -77,6 +77,18 @@ def test_switch_account_masks_account_id(client, caplog, raw, masked):
     assert f'ALSO NEED TO SWITCH WEBSOCKET ACCOUNT TO {masked}' in _messages(caplog)
 
 
+def test_switch_account_reminder_is_debug(client, caplog):
+    ## Arrange
+    caplog.set_level(logging.DEBUG)
+
+    ## Act
+    client.switch_account(PAPER_ID)
+
+    ## Assert
+    levels = [r.levelno for r in caplog.records if 'SWITCH WEBSOCKET ACCOUNT' in r.getMessage()]
+    assert levels == [logging.DEBUG]
+
+
 def test_new_client_log_masks_account_id(caplog):
     ## Arrange
     caplog.set_level(logging.DEBUG)
